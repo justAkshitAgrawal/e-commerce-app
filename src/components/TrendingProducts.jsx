@@ -16,7 +16,7 @@ const data = [
 function TrendingProducts() {
   return (
     <div className="flex justify-center py-5 lg:py-8 whitespace-nowrap ">
-      <div className="flex lg:w-[80%] space-x-5  lg:space-x-10 overflow-x-scroll scrollbar-hide">
+      <div className="flex lg:w-[80%] space-x-5 mx-10  lg:space-x-10 overflow-x-scroll scrollbar-hide">
         {data.map((item) => {
           return (
             <div

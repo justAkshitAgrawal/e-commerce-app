@@ -58,7 +58,7 @@ function Footer() {
 
         <div className="w-full h-1 bg-gray-200 rounded-full"></div>
         <div className="flex items-center px-2 mt-4 space-x-4 lg:px-4 lg:mt-8 lg:pb-10 lg:space-x-0 lg:justify-between lg:text-xl">
-          <h1 className="text-lg font-semibold lg:text-2xl ">AMP</h1>
+          <h1 className="text-sm font-semibold lg:text-2xl ">AMP</h1>
           <h1>Online Store</h1>
           <h1>Jobs</h1>
           <h1>Post</h1>
