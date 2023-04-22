@@ -6,12 +6,18 @@ import OTPInput from "react-otp-input";
 import { BiSend } from "react-icons/bi";
 import { useSetRecoilState } from "recoil";
 import loginStateAtom from "../atoms/loginAtom";
+import profileStateAtom from "../atoms/profileAtom";
+import userCartStateAtom from "../atoms/userCartAtom";
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 function LoginModal({ setShowLoginModal }) {
   const [otp, setOtp] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showOTP, setShowOTP] = useState(false);
   const loginState = useSetRecoilState(loginStateAtom);
+  const profileState = useSetRecoilState(profileStateAtom);
+  const setUserCart = useSetRecoilState(userCartStateAtom);
 
   const generateRecaptcha = () => {
     window.recaptchaVerifier = new RecaptchaVerifier(
@@ -43,9 +49,21 @@ function LoginModal({ setShowLoginModal }) {
     confirmationResult
       .confirm(otp)
       .then((result) => {
-        console.log(result);
         loginState(true);
         setShowLoginModal(false);
+        localStorage.setItem("user", JSON.stringify(result.user));
+        profileState(result.user);
+        const getCategories = async () => {
+          const querySnapshot = await getDocs(collection(db, "carts"));
+          const carts = [];
+          querySnapshot.forEach((doc) => {
+            carts.push({ id: doc.id, ...doc.data() });
+          });
+          const cart = carts.filter((cart) => cart.userId === result.user.uid);
+          setUserCart(cart);
+          return cart;
+        };
+        getCategories();
       })
       .catch((error) => {
         console.log(error);

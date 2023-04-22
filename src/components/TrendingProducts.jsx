@@ -1,4 +1,5 @@
 import React from "react";
+import { BsFillLightningChargeFill } from "react-icons/bs";
 
 const data = [
   "Macbook Pro",
@@ -16,7 +17,10 @@ const data = [
 function TrendingProducts() {
   return (
     <div className="flex justify-center py-5 lg:py-8 whitespace-nowrap ">
-      <div className="flex lg:w-[80%] space-x-5 mx-10  lg:space-x-10 overflow-x-scroll scrollbar-hide">
+      <div className="flex lg:w-[80%] space-x-5 mx-10 items-center  lg:space-x-10 overflow-x-scroll scrollbar-hide">
+        <h1>
+          <BsFillLightningChargeFill className="ml-4 text-yellow-300 w-7 h-7" />
+        </h1>
         {data.map((item) => {
           return (
             <div

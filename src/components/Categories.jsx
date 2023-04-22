@@ -29,12 +29,12 @@ function Categories() {
           {categories.map((category) => {
             return (
               <div
-                className="flex flex-col items-center cursor-pointer group"
+                className="flex flex-col items-center cursor-pointer group lg:min-w-[10vw]"
                 key={category.id}
               >
-                <div className="p-5 transition-all bg-gray-100 rounded-xl group-hover:bg-gray-200 ">
+                <div className="p-5 transition-all bg-gray-100 shadow-md lg:p-7 rounded-xl group-hover:bg-gray-200 ">
                   <img
-                    className="object-contain w-20 h-20 lg:w-40 lg:h-40"
+                    className="object-contain w-20 h-20 lg:w-36 lg:h-36"
                     src={category.image}
                     alt=""
                   />
