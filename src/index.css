@@ -7,4 +7,12 @@
   .nav-icons {
     @apply w-5 h-5 lg:h-8 lg:w-8 cursor-pointer transition-all;
   }
+
+  .footer-link {
+    @apply hover:underline cursor-pointer transition-all;
+  }
+
+  .footer-icons {
+    @apply hover:scale-125 cursor-pointer transition-all w-6 h-6;
+  }
 }

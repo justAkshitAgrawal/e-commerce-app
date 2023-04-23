@@ -11,11 +11,20 @@ import { useRecoilValue } from "recoil";
 import { FadeIn } from "react-slide-fade-in";
 
 import loginStateAtom from "../atoms/loginAtom";
+import userCartStateAtom from "../atoms/userCartAtom";
 import LoginModal from "./LoginModal";
+import { useNavigate } from "react-router-dom";
 
 function NavBar() {
   const loginState = useRecoilValue(loginStateAtom);
+  const userCartState = useRecoilValue(userCartStateAtom);
   const [showLoginModal, setShowLoginModal] = React.useState(false);
+
+  const navigate = useNavigate();
+  let sum = 0;
+  userCartState.forEach((item) => {
+    sum += item.quantity;
+  });
 
   return (
     <>
@@ -24,8 +33,11 @@ function NavBar() {
           <LoginModal setShowLoginModal={setShowLoginModal} />
         </FadeIn>
       )}
-      <div className="flex items-center justify-between p-5 border-b-2 shadow-lg lg:px-10">
-        <div className="flex items-center justify-center space-x-1 cursor-pointer lg:justify-start text-[#007ACC]">
+      <div className="sticky top-0 flex items-center justify-between p-5 bg-white border-b-2 shadow-lg lg:px-10 z-[100]">
+        <div
+          className="flex items-center justify-center space-x-1 cursor-pointer lg:justify-start text-[#007ACC]"
+          onClick={() => navigate("/")}
+        >
           <MdStoreMallDirectory className="nav-icons" />
           <h1 className="text-xl font-bold tracking-wider transition-all lg:text-3xl">
             AMP
@@ -63,7 +75,17 @@ function NavBar() {
             }}
           />
           <AiOutlineHeart className="nav-icons hover:text-red-500" />
-          <RiShoppingCartFill className="nav-icons hover:text-[#007ACC]" />
+          <div
+            className="relative cursor-pointer "
+            onClick={() => {
+              navigate("/cart");
+            }}
+          >
+            <h1 className="absolute px-1 text-xs text-white bg-red-500 rounded-full -top-2 -right-2 lg:top-0 lg:right-0">
+              {sum > 0 && sum}
+            </h1>
+            <RiShoppingCartFill className="nav-icons hover:text-[#007ACC]" />
+          </div>
         </div>
       </div>
       <div id="recaptcha-container"></div>

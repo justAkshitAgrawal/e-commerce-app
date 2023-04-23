@@ -6,10 +6,14 @@ import {
   TbChevronRight,
   TbShoppingCartPlus,
 } from "react-icons/tb";
+import { useRecoilState } from "recoil";
+import userCartStateAtom from "../atoms/userCartAtom";
+import { AiFillCheckCircle } from "react-icons/ai";
 
 function DailyPromotions() {
   const [dailyPromotions, setDailyPromotions] = useState([]);
   const ref = useRef(null);
+  const [cart, setCart] = useRecoilState(userCartStateAtom);
 
   const scroll = (scrollOffset) => {
     ref.current.scrollLeft += scrollOffset;
@@ -52,7 +56,7 @@ function DailyPromotions() {
           ref={ref}
           className="flex w-full py-4 mt-3 space-x-5 overflow-x-scroll lg:mt-6 lg:gap-0 lg:space-x-10 scrollbar-hide scroll-smooth"
         >
-          <div className="items-start p-5 cursor-pointer lg:min-w-[15vw] min-w-[60vw] hover:bg-gray-200 transition-all bg-gray-100 border-2 rounded-xl lg:p-10">
+          <div className="items-center flex flex-col p-5 cursor-pointer lg:min-w-[15vw] lg:max-w-[20vw] min-w-[60vw] hover:bg-gray-200 transition-all bg-gray-100 border-2 rounded-xl lg:p-10">
             <h1 className="text-sm font-bold lg:text-xl">Get Airpods free</h1>
             <h1 className="mt-2 text-xs lg:text-base lg:font-semibold">
               Included with purchase of select iPhone models.
@@ -61,7 +65,7 @@ function DailyPromotions() {
               <img
                 src="https://i.ibb.co/Dz15kdD/image.png"
                 alt=""
-                className="object-contain "
+                className="object-contain max-h-[25vh]"
               />
             </div>
           </div>
@@ -83,12 +87,33 @@ function DailyPromotions() {
                 </h1>
                 <h1 className="flex items-center justify-between mt-10 lg:text-lg ">
                   ₹ {Number(dailyPromotion.price).toLocaleString("en-IN")}
-                  <div
-                    title="Add to cart"
-                    className="p-2 transition-all bg-gray-300 rounded-full shadow-lg hover:scale-125"
-                  >
-                    <TbShoppingCartPlus className="w-6 h-6 " />
-                  </div>
+                  {cart.find((item) => item.id === dailyPromotion.id) ? (
+                    <div>
+                      <h1 className="font-semibold text-[#00B33C] ">
+                        <AiFillCheckCircle className="w-7 h-7" />
+                      </h1>
+                    </div>
+                  ) : (
+                    <div
+                      title="Add to cart"
+                      className="p-2 transition-all bg-gray-300 rounded-full shadow-lg hover:scale-125"
+                      onClick={() => {
+                        setCart((prev) => [
+                          ...prev,
+                          {
+                            id: dailyPromotion.id,
+                            name: dailyPromotion.name,
+                            brand: dailyPromotion.brand,
+                            image: dailyPromotion.image,
+                            price: dailyPromotion.price,
+                            quantity: 1,
+                          },
+                        ]);
+                      }}
+                    >
+                      <TbShoppingCartPlus className="w-6 h-6 " />
+                    </div>
+                  )}
                 </h1>
               </div>
             );
