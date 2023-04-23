@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import NavBar from "../components/NavBar";
 
 import userCartStateAtom from "../atoms/userCartAtom";
 import { useRecoilState } from "recoil";
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import freeItemAtom from "../atoms/freeItemAtom";
 
 function Cart() {
   const [userCart, setUserCart] = useRecoilState(userCartStateAtom);
+  const [freeItem, setFreeItem] = useRecoilState(freeItemAtom);
 
   let price = 0;
   userCart.forEach((item) => {
@@ -18,6 +20,31 @@ function Cart() {
   userCart.forEach((item) => {
     sum += item.quantity;
   });
+
+  console.log(userCart);
+
+  useEffect(() => {
+    if (freeItem) {
+      return;
+    }
+    userCart.forEach((item) => {
+      if (item.name === "iPhone 14 Pro") {
+        setFreeItem(true);
+        setUserCart((prev) => {
+          return [
+            ...prev,
+            {
+              id: "free-item",
+              name: "Airpods Pro (Free)",
+              price: 0,
+              quantity: 1,
+              image: "https://i.ibb.co/Dz15kdD/image.png",
+            },
+          ];
+        });
+      }
+    });
+  }, []);
 
   const handleMinus = (item) => {
     if (item.quantity > 1) {
@@ -79,36 +106,44 @@ function Cart() {
                       <h1 className="text-lg font-semibold lg:text-2xl">
                         {item.name}
                       </h1>
-                      <h1 className="lg:hidden">
-                        ₹ {Number(item.price).toLocaleString("en-IN")}
-                      </h1>
-                      <div className="flex items-center mt-3 space-x-2 lg:mt-0">
-                        <h1 className="hidden lg:block lg:mr-4 lg:text-xl">
-                          ₹ {Number(item.price).toLocaleString("en-IN")}
-                        </h1>
-                        <AiOutlineMinusCircle
-                          className="w-5 h-5 lg:w-6 lg:h-6 "
-                          onClick={() => {
-                            handleMinus(item);
-                          }}
-                        />
-                        <h1 className="mt-[1px] lg:text-xl">{item.quantity}</h1>
-                        <AiOutlinePlusCircle
-                          className="w-5 h-5 lg:w-6 lg:h-6 "
-                          onClick={() => {
-                            handlePlus(item);
-                          }}
-                        />
+                      {item.id != "free-item" && (
+                        <>
+                          <h1 className="lg:hidden">
+                            ₹ {Number(item.price).toLocaleString("en-IN")}
+                          </h1>
+                          <div className="flex items-center mt-3 space-x-2 lg:mt-0">
+                            <h1 className="hidden lg:block lg:mr-4 lg:text-xl">
+                              ₹ {Number(item.price).toLocaleString("en-IN")}
+                            </h1>
+                            <AiOutlineMinusCircle
+                              className="w-5 h-5 cursor-pointer lg:w-6 lg:h-6 "
+                              onClick={() => {
+                                handleMinus(item);
+                              }}
+                            />
+                            <h1 className="mt-[1px] lg:text-xl">
+                              {item.quantity}
+                            </h1>
+                            <AiOutlinePlusCircle
+                              className="w-5 h-5 cursor-pointer lg:w-6 lg:h-6 "
+                              onClick={() => {
+                                handlePlus(item);
+                              }}
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    {item.id != "free-item" && (
+                      <div
+                        className="absolute p-1 transition-all bg-gray-300 rounded-full shadow-lg cursor-pointer lg:p-2 bottom-3 right-3 hover:scale-110"
+                        onClick={() => {
+                          handleDelete(item);
+                        }}
+                      >
+                        <RiDeleteBin5Line className="w-5 h-5 " />
                       </div>
-                    </div>
-                    <div
-                      className="absolute p-1 transition-all bg-gray-300 rounded-full shadow-lg cursor-pointer lg:p-2 bottom-3 right-3 hover:scale-110"
-                      onClick={() => {
-                        handleDelete(item);
-                      }}
-                    >
-                      <RiDeleteBin5Line className="w-5 h-5 " />
-                    </div>
+                    )}
                   </div>
                 );
               })}
