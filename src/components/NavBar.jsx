@@ -31,7 +31,7 @@ function NavBar() {
             AMP
           </h1>
         </div>
-        <div className="items-center justify-between hidden px-4 py-2 -ml-5 space-x-1 bg-gray-100 rounded-full cursor-pointer lg:flex">
+        <div className="items-center justify-between hidden px-4 py-2 -ml-5 space-x-1 transition-all bg-gray-100 rounded-full cursor-pointer lg:flex hover:bg-gray-200">
           <MdKeyboardDoubleArrowDown className="w-5 h-5" />
           <h1 className=" txet-lg">Filter</h1>
         </div>
@@ -42,7 +42,7 @@ function NavBar() {
             placeholder="Find something interesting..."
           />
         </div>
-        <div className="items-center hidden space-x-3 cursor-pointer lg:flex ">
+        <div className="items-center hidden px-2 space-x-3 rounded-full cursor-pointer lg:flex hover:bg-gray-200 ">
           <BsGlobe className="w-6 h-6" />
           <div className="text-sm">
             <h1>Region</h1>

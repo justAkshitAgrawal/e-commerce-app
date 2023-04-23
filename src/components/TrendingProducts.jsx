@@ -1,5 +1,5 @@
-import React from "react";
-import { BsFillLightningChargeFill } from "react-icons/bs";
+import React, { useRef } from "react";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
 const data = [
   "Macbook Pro",
@@ -15,12 +15,27 @@ const data = [
 ];
 
 function TrendingProducts() {
+  const ref = useRef(null);
+
+  const scroll = (scrollOffset) => {
+    ref.current.scrollLeft += scrollOffset;
+  };
+
   return (
-    <div className="flex justify-center py-5 lg:py-8 whitespace-nowrap ">
-      <div className="flex lg:w-[80%] space-x-5 mx-10 items-center  lg:space-x-10 overflow-x-scroll scrollbar-hide">
-        <h1>
-          <BsFillLightningChargeFill className="ml-4 text-yellow-300 w-7 h-7" />
-        </h1>
+    <div className="relative flex justify-center py-5 lg:py-8 whitespace-nowrap ">
+      <BsChevronLeft
+        className="absolute w-5 h-5 text-gray-500 left-2 top-7 lg:left-[8vw] lg:top-[4.2vh] cursor-pointer"
+        onClick={() => scroll(-100)}
+      />
+      <BsChevronRight
+        className="absolute w-5 h-5 text-gray-500 right-2 top-7 lg:right-[8vw] lg:top-[4.2vh] cursor-pointer"
+        onClick={() => scroll(100)}
+      />
+
+      <div
+        ref={ref}
+        className="flex lg:w-[80%] space-x-5 mx-10 items-center relative lg:space-x-10 overflow-x-scroll scrollbar-hide scroll-smooth"
+      >
         {data.map((item) => {
           return (
             <div
