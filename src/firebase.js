@@ -21,6 +21,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const cartRef = (userId) => doc(db, "carts", userId);
 auth.languageCode = "en";
 
-export { db, auth };
+export { db, auth, cartRef };

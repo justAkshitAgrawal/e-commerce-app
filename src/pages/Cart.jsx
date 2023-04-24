@@ -2,17 +2,30 @@ import React, { useEffect } from "react";
 import NavBar from "../components/NavBar";
 
 import userCartStateAtom from "../atoms/userCartAtom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import freeItemAtom from "../atoms/freeItemAtom";
+import loginStateAtom from "../atoms/loginAtom";
+import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [userCart, setUserCart] = useRecoilState(userCartStateAtom);
-  const [freeItem, setFreeItem] = useRecoilState(freeItemAtom);
+  const loginState = useRecoilValue(loginStateAtom);
+  const [payment, setPayment] = React.useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loginState) {
+      if (localStorage.getItem("cart") === null) {
+        localStorage.setItem("cart", JSON.stringify([]));
+      }
+      setUserCart(JSON.parse(localStorage.getItem("cart")));
+    }
+  }, [loginState]);
 
   let price = 0;
-  userCart.forEach((item) => {
+  userCart?.forEach((item) => {
     price += item.price * item.quantity;
   });
 
@@ -21,34 +34,21 @@ function Cart() {
     sum += item.quantity;
   });
 
-  console.log(userCart);
-
-  useEffect(() => {
-    if (freeItem) {
-      return;
-    }
-    userCart.forEach((item) => {
-      if (item.name === "iPhone 14 Pro") {
-        setFreeItem(true);
-        setUserCart((prev) => {
-          return [
-            ...prev,
-            {
-              id: "free-item",
-              name: "Airpods Pro (Free)",
-              price: 0,
-              quantity: 1,
-              image: "https://i.ibb.co/Dz15kdD/image.png",
-            },
-          ];
-        });
-      }
-    });
-  }, []);
-
   const handleMinus = (item) => {
-    if (item.quantity > 1) {
-      setUserCart(
+    setUserCart(
+      userCart.map((cartItem) => {
+        if (cartItem.id === item.id) {
+          return {
+            ...cartItem,
+            quantity: cartItem.quantity - 1,
+          };
+        }
+        return cartItem;
+      })
+    );
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(
         userCart.map((cartItem) => {
           if (cartItem.id === item.id) {
             return {
@@ -58,8 +58,8 @@ function Cart() {
           }
           return cartItem;
         })
-      );
-    }
+      )
+    );
   };
 
   const handlePlus = (item) => {
@@ -74,6 +74,20 @@ function Cart() {
         return cartItem;
       })
     );
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(
+        userCart.map((cartItem) => {
+          if (cartItem.id === item.id) {
+            return {
+              ...cartItem,
+              quantity: cartItem.quantity + 1,
+            };
+          }
+          return cartItem;
+        })
+      )
+    );
   };
 
   const handleDelete = (item) => {
@@ -82,7 +96,17 @@ function Cart() {
         return cartItem.id !== item.id;
       })
     );
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(
+        userCart.filter((cartItem) => {
+          return cartItem.id !== item.id;
+        })
+      )
+    );
   };
+
   return (
     <>
       <NavBar />
@@ -175,8 +199,27 @@ function Cart() {
                   ₹ {Number(price).toLocaleString("en-IN")}
                 </h1>
               </div>
-              <button className="mt-5 bg-[#007ACC] px-10 w-fit self-center py-3 text-white font-semibold rounded-full">
-                Proceed to Pay
+              <button
+                disabled={sum === 0}
+                className="mt-5 bg-[#007ACC] px-10 w-fit self-center py-3 text-white font-semibold rounded-full disabled:bg-gray-300 "
+                style={{
+                  backgroundColor: payment ? "#00B33C" : "",
+                }}
+                onClick={() => {
+                  setPayment(true);
+                  setTimeout(() => navigate("/success"), 1500);
+                  localStorage.removeItem("cart");
+                  // setUserCart([]);
+                }}
+              >
+                {payment ? (
+                  <div
+                    className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em]"
+                    role="status"
+                  ></div>
+                ) : (
+                  <h1>Proceed to Pay</h1>
+                )}
               </button>
               <div>
                 <h1 className="mt-5 text-sm font-semibold">Still Deciding?</h1>

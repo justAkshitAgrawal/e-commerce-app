@@ -3,13 +3,12 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../firebase";
 import { IoIosClose } from "react-icons/io";
 import OTPInput from "react-otp-input";
-import { BiSend } from "react-icons/bi";
 import { useSetRecoilState } from "recoil";
 import loginStateAtom from "../atoms/loginAtom";
 import profileStateAtom from "../atoms/profileAtom";
 import userCartStateAtom from "../atoms/userCartAtom";
 import { db } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 
 function LoginModal({ setShowLoginModal }) {
   const [otp, setOtp] = useState("");
@@ -29,6 +28,16 @@ function LoginModal({ setShowLoginModal }) {
       auth
     );
   };
+
+  // auth.onAuthStateChanged((user) => {
+  //   if (user) {
+  //     const cartRef = doc(db, "carts", user.uid);
+  //     console.log("logging in");
+  //     setDoc(cartRef, {
+  //       items: [],
+  //     });
+  //   }
+  // });
 
   const getOTP = () => {
     generateRecaptcha();

@@ -1,19 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import { db } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, setDoc } from "firebase/firestore";
 import {
   TbChevronLeft,
   TbChevronRight,
   TbShoppingCartPlus,
 } from "react-icons/tb";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userCartStateAtom from "../atoms/userCartAtom";
 import { AiFillCheckCircle } from "react-icons/ai";
+import loginStateAtom from "../atoms/loginAtom";
 
 function DailyPromotions() {
   const [dailyPromotions, setDailyPromotions] = useState([]);
   const ref = useRef(null);
   const [cart, setCart] = useRecoilState(userCartStateAtom);
+  const loginState = useRecoilValue(loginStateAtom);
 
   const scroll = (scrollOffset) => {
     ref.current.scrollLeft += scrollOffset;
@@ -30,7 +32,7 @@ function DailyPromotions() {
     };
 
     getDailyPromotions().then((dailyPromotions) => {
-      setDailyPromotions(dailyPromotions.slice(0, 5));
+      setDailyPromotions(dailyPromotions);
     });
   }, []);
 
@@ -85,7 +87,7 @@ function DailyPromotions() {
                 <h1 className="mt-10 text-lg font-semibold lg:text-xl ">
                   {dailyPromotion.name}
                 </h1>
-                <h1 className="flex items-center justify-between mt-10 lg:text-lg ">
+                <div className="flex items-center justify-between mt-10 lg:text-lg ">
                   ₹ {Number(dailyPromotion.price).toLocaleString("en-IN")}
                   {cart.find((item) => item.id === dailyPromotion.id) ? (
                     <div>
@@ -93,10 +95,10 @@ function DailyPromotions() {
                         <AiFillCheckCircle className="w-7 h-7" />
                       </h1>
                     </div>
-                  ) : (
-                    <div
+                  ) : loginState ? (
+                    <button
                       title="Add to cart"
-                      className="p-2 transition-all bg-gray-300 rounded-full shadow-lg hover:scale-125"
+                      className="p-2 transition-all bg-gray-300 rounded-full shadow-lg hover:scale-125 disabled:cursor-not-allowed disabled:scale-100"
                       onClick={() => {
                         setCart((prev) => [
                           ...prev,
@@ -109,12 +111,29 @@ function DailyPromotions() {
                             quantity: 1,
                           },
                         ]);
+
+                        localStorage.setItem(
+                          "cart",
+                          JSON.stringify([
+                            ...cart,
+                            {
+                              id: dailyPromotion.id,
+                              name: dailyPromotion.name,
+                              brand: dailyPromotion.brand,
+                              image: dailyPromotion.image,
+                              price: dailyPromotion.price,
+                              quantity: 1,
+                            },
+                          ])
+                        );
                       }}
                     >
                       <TbShoppingCartPlus className="w-6 h-6 " />
-                    </div>
+                    </button>
+                  ) : (
+                    <h1 className="text-xs text-red-400">Login to buy</h1>
                   )}
-                </h1>
+                </div>
               </div>
             );
           })}
